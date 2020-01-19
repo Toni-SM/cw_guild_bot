@@ -27,12 +27,12 @@ with open('items.json') as jsonfile:
 def item_by_name(item_name, item_type=None):
     if item_type in ITEMS:
         for k in ITEMS[item_type]:
-            if ITEMS[item_type][k]["name"]==item_name:
+            if ITEMS[item_type][k]["name"].lower()==item_name.lower():
                 return ITEMS[item_type][k]
     else:
         for t in ITEMS:
             for k in ITEMS[t]:
-                if ITEMS[t][k]["name"]==item_name:
+                if ITEMS[t][k]["name"].lower()==item_name.lower():
                     return ITEMS[t][k]
     return {}
    
@@ -48,6 +48,17 @@ def item_by_code(item_code, item_type=None):
                     return ITEMS[t][k]
     return {}
     
+def item_is_crafteable(item, recipe_amount=0, part_amount=0):
+    amount=0
+    if item["tier"]=="T2":
+        amount=3
+    elif item["tier"]=="T3":
+        amount=5
+    elif item["tier"]=="T4":
+        amount=6
+    if amount and recipe_amount>0 and part_amount>=amount:
+        return True
+    return False
     
 if __name__=="__main__":
     print("")

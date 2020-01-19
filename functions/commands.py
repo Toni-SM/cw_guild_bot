@@ -1,9 +1,14 @@
 import html
+import json
+import datetime
 import telegram
 
 import model
 import utils
 import settings
+
+
+CACHE={}
 
 # DEFAULT COMMANDS
 
@@ -210,3 +215,99 @@ def elite(update, context):
                                      disable_web_page_preview=True)
         except Exception as e:
             utils._admin_error(context, "/elite", user=user, error=str(e))
+
+def craft(update, context):
+    """
+    """
+    global CACHE
+    day_range=7
+    cid=update.message.chat.id
+    today=datetime.datetime.today()
+    owners=""
+    recipes={}
+    parts={}
+    # guild
+    if "guild" in CACHE:
+        # recipes
+        for k in CACHE["guild"]["recipes"]:
+            if k in recipes:
+                recipes[k]+=CACHE["guild"]["recipes"][k]
+            else:
+                recipes[k]=CACHE["guild"]["recipes"][k]
+        # parts
+        for k in CACHE["guild"]["parts"]:
+            if k in parts:
+                parts[k]+=CACHE["guild"]["parts"][k]
+            else:
+                parts[k]=CACHE["guild"]["parts"][k]
+        if recipes or parts:
+            owners+="\n    - {0}".format(settings.GUILD_NAME.decode('unicode_escape'))            
+    # users
+    for u in model.users():
+        crafting=json.loads(u.crafting)
+        if crafting:
+            # validate the date
+            t=datetime.datetime.fromisoformat(crafting["datetime"])
+            if (datetime.datetime.today()-t).total_seconds()/(day_range*24.0*60.0*60.0)>1:
+                owners+=u"\n    - @{0} \U0000231B".format(html.escape(u.username))
+            else:
+                owners+="\n    - @{0}".format(html.escape(u.username))
+            # recipes
+            for k in crafting["recipes"]:
+                if k in recipes:
+                    recipes[k]+=crafting["recipes"][k]
+                else:
+                    recipes[k]=crafting["recipes"][k]
+            # parts
+            for k in crafting["parts"]:
+                if k in parts:
+                    parts[k]+=crafting["parts"][k]
+                else:
+                    parts[k]=crafting["parts"][k]
+    # list items
+    text=""
+    for i in range(1,103):
+        code=str(i).zfill(2)
+        item_recipe=utils.item_by_code("r{0}".format(code), "recipes")
+        item_part=utils.item_by_code("k{0}".format(code), "parts")
+        if item_recipe and item_part:
+            r_recipe=recipes.get(item_recipe["name"], 0)
+            r_part=parts.get(item_part["name"], 0)
+            crafteable=u'\U00002705' if utils.item_is_crafteable(item_recipe, r_recipe, r_part) else u'\U0001F17E'
+            text+="\n/w{0}  {4}  {1} | {2}  {3}".format(code, r_recipe, r_part, item_recipe["name"][:-7], crafteable)
+    # send message
+    if owners:
+        text+=u"\n\n\U0001F536 Owners:"+owners
+    else:
+        text+=u"\n\n\U0001F536 Owners:\n    - <i>empty list</i>"
+    context.bot.send_message(chat_id=cid, 
+                             text=text,
+                             parse_mode=telegram.ParseMode.HTML,
+                             disable_web_page_preview=True)
+                                     
+def craft_reset(update, context):
+    """
+    Reset craft operation
+    """
+    global CACHE
+    cid=update.message.chat.id
+    tmp=update.message.text.split(" ")
+    if len(tmp)>1 and tmp[1]=="yes":
+        # reset users
+        for user in model.users():
+            user.crafting="{}"
+            status=model.update_user(user)
+        # reset guild
+        CACHE["guild"]={"resources": {},
+                        "parts": {},
+                        "recipes": {}}
+        context.bot.send_message(chat_id=cid, 
+                                 text="Crafting operation restarted...",
+                                 parse_mode=telegram.ParseMode.HTML,
+                                 disable_web_page_preview=True)
+    else:
+        context.bot.send_message(chat_id=cid, 
+                                 text='Type "/craft_reset <i>yes</i>" for reset all operation and stored data',
+                                 parse_mode=telegram.ParseMode.HTML,
+                                 disable_web_page_preview=True)
+    

@@ -1,4 +1,5 @@
 import html
+import json
 import telegram
 import datetime
 
@@ -103,8 +104,18 @@ def _action_reinforcement(cid, user, content, update, context):
         if settings.VERBOSE:
             print("            Guild Warehouse")
         for c in content.split(b'\\n')[1:]:
-            tmp=c[3:].split(b' x ')
-            CACHE[user.id]["resources"]["guild"][tmp[0].decode()]=int(tmp[1])
+            tmp_code=c.split(b' ')[0]
+            tmp=b' '.join(c.split(b' ')[1:]).split(b' x ')
+            # recipe
+            if tmp_code.startswith(b'r'):
+                CACHE["guild"]["recipes"][tmp[0].decode()]=int(tmp[1])
+            # part
+            elif tmp_code.startswith(b'k'):
+                CACHE["guild"]["parts"][tmp[0].decode()]=int(tmp[1])
+            # resource
+            else:
+                CACHE[user.id]["resources"]["guild"][tmp[0].decode()]=int(tmp[1])
+                CACHE["guild"]["resources"][tmp[0].decode()]=int(tmp[1])
     # reinforcement message
     elif content.split(b'\\n')[0]==b'Materials needed for reinforcement:':
         # validate the cache
@@ -145,6 +156,40 @@ def _action_reinforcement(cid, user, content, update, context):
         if settings.VERBOSE:
             print("            ... MISSING DATA")
 
+def _action_crafting_list(cid, user, content, update, context):
+    """
+    """
+    data={"parts": {}, "recipes": {}, "datetime": None}
+    today=datetime.datetime.today().isoformat()
+    for c in content.split(b'\\n'):
+        tmp=c
+        # recipe
+        if c.startswith(b'\\U0001f4c3'):
+            tmp=c.split(b'\\U0001f4c3')[1].split(b' /view_r')[0]
+            tmp=tmp.split(b' (')
+            if len(tmp)==2 and tmp[1].endswith(b')'):
+                c_name=tmp[0].decode()
+                c_amount=int(tmp[1][:-1])
+                data["recipes"][c_name]=c_amount
+                data["datetime"]=today
+        # part
+        else:
+            tmp=c.split(b' (')
+            if len(tmp)==2 and tmp[1].endswith(b')'):
+                c_name=tmp[0].decode()
+                c_amount=int(tmp[1][:-1])
+                data["parts"][c_name]=c_amount
+                data["datetime"]=today
+    if data["datetime"]:
+        user.crafting=json.dumps(data)
+        if model.user_by_id(update.effective_user.id):
+            status=model.update_user(user)
+            if not status:
+                utils._admin_error(context, "_action_crafting_list", user=user, error="update: False", trace=False)
+        else:
+            utils._admin_error(context, "_action_crafting_list", user=user, error="no registered user", trace=False)
+        
+    
 
 # MAIN FUNCTION
 
@@ -168,6 +213,9 @@ def forwarded(update, context):
         CACHE.setdefault(user.id, {"resources": {"guild": {}, 
                                                  "reinforcement": {},
                                                  "datetime": datetime.datetime.today()}})
+        CACHE.setdefault("guild", {"resources": {},
+                                   "parts": {},
+                                   "recipes": {}})
         # escape content
         content=update.message.text.encode(encoding="unicode_escape")
         
@@ -181,7 +229,16 @@ def forwarded(update, context):
             _action_battle_report(cid, user, content, update, context)
             return
         
-        if content.split(b'\\n')[0]==b'Guild Warehouse:' or content.split(b'\\n')[0]==b'Materials needed for reinforcement:':
+        # materials needed for reinforcement (blacksmith's store message)
+        if content.split(b'\\n')[0]==b'Materials needed for reinforcement:':
             _action_reinforcement(cid, user, content, update, context)
             return
+        
+        # guild warehouse
+        if content.split(b'\\n')[0]==b'Guild Warehouse:':
+            _action_reinforcement(cid, user, content, update, context)
+            return
+            
+        # parts and recipes
+        _action_crafting_list(cid, user, content, update, context)
         

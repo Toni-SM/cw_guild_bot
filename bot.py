@@ -19,6 +19,13 @@ with open('killprocess.sh', mode='w') as file_object:
 logging.basicConfig(format='%(asctime)s - %(name)s - %(levelname)s - %(message)s', level=logging.INFO)
 logger=logging.getLogger(__name__)
 
+# shared data
+SHARED_DATA={}
+
+functions.filters.CACHE=SHARED_DATA
+functions.commands.CACHE=SHARED_DATA
+functions.regex.CACHE=SHARED_DATA
+
 
 # ERROR HANDLER
 
@@ -73,9 +80,12 @@ if __name__=="__main__":
     dispatcher.add_handler(ext.CommandHandler(["pin"], functions.commands.pin))
     dispatcher.add_handler(ext.CommandHandler(["everybody"], functions.commands.everybody))
     dispatcher.add_handler(ext.CommandHandler(["elite"], functions.commands.elite))
+    dispatcher.add_handler(ext.CommandHandler(["craft"], functions.commands.craft))
+    dispatcher.add_handler(ext.CommandHandler(["craft_reset"], functions.commands.craft_reset))
     
     # regexp handlers
     dispatcher.add_handler(ext.MessageHandler(ext.Filters.regex(r'/stomp_[\w]+'), functions.regex.stomp))
+    dispatcher.add_handler(ext.MessageHandler(ext.Filters.regex(r'/[wrk][\d]+'), functions.regex.resource))
     
     # filter handlers
     dispatcher.add_handler(ext.MessageHandler(ext.Filters.forwarded, functions.filters.forwarded))

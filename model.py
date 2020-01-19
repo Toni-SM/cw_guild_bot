@@ -115,11 +115,18 @@ def update_user(user):
     _user=_session.query(User).get(user.id)
     if _user:
         try:
-            _user.username=user.username
-            _user.full_name=user.full_name
-            _user.link=user.link
-            _user.cw_name=user.cw_name
-            _user.cw_level=user.cw_level
+            if user.username!=None:
+                _user.username=user.username
+            if user.full_name!=None:
+                _user.full_name=user.full_name
+            if user.link!=None:
+                _user.link=user.link
+            if user.cw_name!=None:
+                _user.cw_name=user.cw_name
+            if user.cw_level!=None:
+                _user.cw_level=user.cw_level
+            if user.crafting!=None:
+                _user.crafting=user.crafting
             _user.updated=str(datetime.utcnow())
             _session.add(_user)
             _session.commit()
