@@ -56,6 +56,11 @@ def item_is_crafteable(item, recipe_amount=0, part_amount=0):
         amount=5
     elif item["tier"]=="T4":
         amount=6
+    # adjust cloak parts
+    if item["code"][1:] in ['59', '60', '61']:
+        amount=3
+    elif item["code"][1:] in ['100', '101', '102']:
+        amount=4
     if amount and recipe_amount>0 and part_amount>=amount:
         return True
     return False

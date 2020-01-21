@@ -240,7 +240,7 @@ def craft(update, context):
                 parts[k]+=CACHE["guild"]["parts"][k]
             else:
                 parts[k]=CACHE["guild"]["parts"][k]
-        if recipes
+        if recipes:
             owners+="\n    - {0} ({1})".format(settings.GUILD_NAME.decode('unicode_escape'), "recipes")            
         if parts:
             owners+="\n    - {0} ({1})".format(settings.GUILD_NAME.decode('unicode_escape'), "parts")            
