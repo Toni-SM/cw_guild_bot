@@ -240,12 +240,14 @@ def craft(update, context):
                 parts[k]+=CACHE["guild"]["parts"][k]
             else:
                 parts[k]=CACHE["guild"]["parts"][k]
-        if recipes or parts:
-            owners+="\n    - {0}".format(settings.GUILD_NAME.decode('unicode_escape'))            
+        if recipes
+            owners+="\n    - {0} ({1})".format(settings.GUILD_NAME.decode('unicode_escape'), "recipes")            
+        if parts:
+            owners+="\n    - {0} ({1})".format(settings.GUILD_NAME.decode('unicode_escape'), "parts")            
     # users
     for u in model.users():
         crafting=json.loads(u.crafting)
-        if crafting:
+        if crafting and len(crafting.keys()):
             # validate the date
             t=datetime.datetime.fromisoformat(crafting["datetime"])
             if (datetime.datetime.today()-t).total_seconds()/(day_range*24.0*60.0*60.0)>1:
