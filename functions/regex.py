@@ -115,7 +115,7 @@ def resource(update, context):
                     parts+='\n    - <a href="https://t.me/share/url?url=/g_deposit%20{2}%20{1}">{0}</a> x {1}{3}'.format(html.escape(u.username), tmp, r_part["code"], dated)
         # send message
         crafteable=u'\U00002705' if utils.item_is_crafteable(r_recipe, r_recipe_amount, r_part_amount) else u'\U0001F17E'
-        text="{1} <b>{0}</b>\n(The links are the shortcut for easily deposit)\n\n".format(r_recipe["name"][:-7], crafteable)
+        text="{1} <b>{0}</b>\n(links are deposit shortcuts)\n\n".format(r_recipe["name"][:-7], crafteable)
         text+="{0} ({1}){2}\n\n{3} ({4}){5}".format(r_recipe["name"], r_recipe_amount, recipes if recipes else "", r_part["name"], r_part_amount, parts if parts else "")
         context.bot.send_message(chat_id=cid, 
                                  text=text,

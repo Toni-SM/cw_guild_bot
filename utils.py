@@ -50,17 +50,21 @@ def item_by_code(item_code, item_type=None):
     
 def item_is_crafteable(item, recipe_amount=0, part_amount=0):
     amount=0
-    if item["tier"]=="T2":
-        amount=3
-    elif item["tier"]=="T3":
-        amount=5
-    elif item["tier"]=="T4":
-        amount=6
     # adjust cloak parts
     if item["code"][1:] in ['59', '60', '61']:
         amount=3
     elif item["code"][1:] in ['100', '101', '102']:
         amount=4
+    # adjust some weapons
+    elif item["code"][1:] in ['91', '96', '97']:
+        amount=5
+    # iterate by tiers
+    elif item["tier"]=="T2":
+        amount=3
+    elif item["tier"]=="T3":
+        amount=5
+    elif item["tier"]=="T4":
+        amount=6
     if amount and recipe_amount>0 and part_amount>=amount:
         return True
     return False
