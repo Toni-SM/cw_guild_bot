@@ -164,7 +164,7 @@ def _action_crafting_list(cid, user, content, update, context):
     for c in content.split(b'\\n'):
         tmp=c
         # check false positive messages
-        if b'Deposited successfully:' in tmp:
+        if b':' in tmp:
             continue
         # recipe
         if c.startswith(b'\\U0001f4c3'):
