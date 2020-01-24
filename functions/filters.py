@@ -163,6 +163,9 @@ def _action_crafting_list(cid, user, content, update, context):
     today=datetime.datetime.today().isoformat()
     for c in content.split(b'\\n'):
         tmp=c
+        # check false positive messages
+        if b'Deposited successfully:' in tmp:
+            continue
         # recipe
         if c.startswith(b'\\U0001f4c3'):
             tmp=c.split(b'\\U0001f4c3')[1].split(b' /view_r')[0]
