@@ -75,7 +75,7 @@ if __name__=="__main__":
     # command handlers
     dispatcher.add_handler(ext.CommandHandler(["start", "restart"], functions.commands.start))
     dispatcher.add_handler(ext.CommandHandler(["help"], functions.commands.help))
-    dispatcher.add_handler(ext.CommandHandler(["users", "users_list"], functions.commands.users))
+    dispatcher.add_handler(ext.CommandHandler(["users", "users_list", "users_detail"], functions.commands.users))
     dispatcher.add_handler(ext.CommandHandler(["message"], functions.commands.message))
     dispatcher.add_handler(ext.CommandHandler(["pin"], functions.commands.pin))
     dispatcher.add_handler(ext.CommandHandler(["everybody"], functions.commands.everybody))

@@ -48,7 +48,7 @@ def users(update, context):
             users=model.users()
             # summary
             if update.message.text=="/users":            
-                text=u'<b>Subscribed users:</b> {0}\n\nUse /users_list for display the full list (a lot of messages)'.format(len(users))
+                text=u'<b>Subscribed users:</b> {0}\n\nUse /users_list for display the full list\nUse /users_detail for display detailed info (a lot of messages)'.format(len(users))
                 context.bot.send_message(chat_id=settings.ADMIN_ID, 
                                          text=text,
                                          parse_mode=telegram.ParseMode.HTML,
@@ -68,6 +68,14 @@ def users(update, context):
                 if text:
                     context.bot.send_message(chat_id=settings.ADMIN_ID, 
                                              text=text,
+                                             disable_web_page_preview=True)
+            # detailed list
+            elif update.message.text=="/users_detail":            
+                for user in users:
+                    text="<b>id:</b> {0}\n<b>username:</b> {1}\n<b>full_name:</b> {2}\n<b>link:</b> {3}\n<b>cw_name:</b> {4}\n<b>cw_level:</b> {5}\n<b>updated:</b> {6}\n<b>crafting:</b> {7}\n\n<code>/craft_reset {0}</code>".format(user.id, html.escape(user.username), html.escape(user.full_name), html.escape(user.link), html.escape(user.cw_name), user.cw_level, html.escape(user.updated), html.escape(user.crafting))
+                    context.bot.send_message(chat_id=settings.ADMIN_ID, 
+                                             text=text,
+                                             parse_mode=telegram.ParseMode.HTML,
                                              disable_web_page_preview=True)
     except Exception as e:
         utils._admin_error(context, "/users", error=str(e), trace=False)
@@ -294,19 +302,30 @@ def craft_reset(update, context):
     global CACHE
     cid=update.message.chat.id
     tmp=update.message.text.split(" ")
-    if len(tmp)>1 and tmp[1]=="yes":
-        # reset users
-        for user in model.users():
-            user.crafting="{}"
-            status=model.update_user(user)
-        # reset guild
-        CACHE["guild"]={"resources": {},
-                        "parts": {},
-                        "recipes": {}}
-        context.bot.send_message(chat_id=cid, 
-                                 text="Crafting operation restarted...",
-                                 parse_mode=telegram.ParseMode.HTML,
-                                 disable_web_page_preview=True)
+    if len(tmp)>1:
+        if tmp[1]=="yes":
+            # reset users
+            for user in model.users():
+                user.crafting="{}"
+                status=model.update_user(user)
+            # reset guild
+            CACHE["guild"]={"resources": {},
+                            "parts": {},
+                            "recipes": {}}
+            context.bot.send_message(chat_id=cid, 
+                                     text="Crafting operation restarted...",
+                                     parse_mode=telegram.ParseMode.HTML,
+                                     disable_web_page_preview=True)
+        else:
+            user=model.user_by_id(tmp[1])
+            if user:
+                user.crafting="{}"
+                status=model.update_user(user)
+                context.bot.send_message(chat_id=cid, 
+                                         text="Crafting operation restarted [{1}]... for @{0}".format(html.escape(user.username), status),
+                                         parse_mode=telegram.ParseMode.HTML,
+                                         disable_web_page_preview=True)
+                
     else:
         context.bot.send_message(chat_id=cid, 
                                  text='Type "/craft_reset <i>yes</i>" for reset all operation and stored data',
