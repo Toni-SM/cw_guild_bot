@@ -259,9 +259,9 @@ def craft(update, context):
             # validate the date
             t=datetime.datetime.fromisoformat(crafting["datetime"])
             if (datetime.datetime.today()-t).total_seconds()/(day_range*24.0*60.0*60.0)>1:
-                owners+=u"\n    - @{0} \U0000231B".format(html.escape(u.username))
+                owners+=u"\n    - {0} \U0000231B".format(html.escape(u.username))
             else:
-                owners+="\n    - @{0}".format(html.escape(u.username))
+                owners+="\n    - {0}".format(html.escape(u.username))
             # recipes
             for k in crafting["recipes"]:
                 if k in recipes:
