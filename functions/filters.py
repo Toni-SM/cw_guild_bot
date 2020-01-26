@@ -142,7 +142,7 @@ def _action_reinforcement(cid, user, content, update, context):
         for (u_res, u_amount) in resources["reinforcement"].items():
             diff=u_amount-resources["guild"].get(u_res, 0)
             if diff>0:
-                text+='\n{2} <a href="https://t.me/share/url?url=/g_deposit%20{2}%20{1}">{0}</a> x {1}'.format(u_res, u_amount, utils.item_by_name(u_res, "resources").get("code", "00"))
+                text+='\n{2} <a href="https://t.me/share/url?url=/g_deposit%20{2}%20{1}">{0}</a> x {1}'.format(u_res, diff, utils.item_by_name(u_res, "resources").get("code", "00"))
         CACHE[user.id]["resources"]["guild"]={}
         CACHE[user.id]["resources"]["reinforcement"]={}
         if text:
