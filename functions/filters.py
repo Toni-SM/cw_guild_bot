@@ -117,7 +117,7 @@ def _action_reinforcement(cid, user, content, update, context):
                 CACHE[user.id]["resources"]["guild"][tmp[0].decode()]=int(tmp[1])
                 CACHE["guild"]["resources"][tmp[0].decode()]=int(tmp[1])
     # reinforcement message
-    elif content.split(b'\\n')[0]==b'Materials needed for ':
+    elif content.split(b'\\n')[0].startswith(b'Materials needed for '):
         # validate the cache
         if (datetime.datetime.today()-CACHE[user.id]["resources"]["datetime"]).total_seconds()>delta:
             CACHE[user.id]["resources"]["guild"]={}
@@ -236,7 +236,7 @@ def forwarded(update, context):
             return
         
         # materials needed for reinforcement (blacksmith's store message)
-        if content.split(b'\\n')[0]==b'Materials needed for ':
+        if content.split(b'\\n')[0].startswith(b'Materials needed for '):
             _action_reinforcement(cid, user, content, update, context)
             return
         
