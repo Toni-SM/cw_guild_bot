@@ -147,7 +147,7 @@ def _action_reinforcement(cid, user, content, update, context):
         CACHE[user.id]["resources"]["reinforcement"]={}
         if text:
             context.bot.send_message(chat_id=cid, 
-                                     text="Deposit for {0} sponsored by guild:".format('reinforcement' if b' reinforcement:' in content else 'repair')+text,
+                                     text="Deposit for repair/reinforcement sponsored by guild:"+text,
                                      parse_mode=telegram.ParseMode.HTML,
                                      disable_web_page_preview=True)
         else:
