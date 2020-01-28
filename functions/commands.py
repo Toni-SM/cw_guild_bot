@@ -228,7 +228,7 @@ def craft(update, context):
     """
     """
     global CACHE
-    day_range=7
+    day_range=3
     cid=update.message.chat.id
     today=datetime.datetime.today()
     owners=""
@@ -258,8 +258,9 @@ def craft(update, context):
         if crafting and len(crafting.keys()):
             # validate the date
             t=datetime.datetime.fromisoformat(crafting["datetime"])
-            if (datetime.datetime.today()-t).total_seconds()/(day_range*24.0*60.0*60.0)>1:
-                owners+=u"\n    - {0} \U0000231B".format(html.escape(u.username))
+            tmp=(datetime.datetime.today()-t).total_seconds()/(24.0*60.0*60.0)
+            if tmp>day_range:
+                owners+=u"\n    - {0} (\U0000231B {1} days ago)".format(html.escape(u.username), int(tmp))
             else:
                 owners+="\n    - {0}".format(html.escape(u.username))
             # recipes
@@ -287,9 +288,9 @@ def craft(update, context):
             text+="\n/w{0}  {4}  {1} | {2}  {3}".format(code, r_recipe, r_part, item_recipe["name"][:-7], crafteable)
     # send message
     if owners:
-        text+=u"\n\n\U0001F536 Owners:"+owners
+        text+=u"\n\n<b>Owners:</b>"+owners
     else:
-        text+=u"\n\n\U0001F536 Owners:\n    - <i>empty list</i>"
+        text+=u"\n\n<b>Owners:</b>\n    - <i>empty list</i>"
     context.bot.send_message(chat_id=cid, 
                              text=text,
                              parse_mode=telegram.ParseMode.HTML,
