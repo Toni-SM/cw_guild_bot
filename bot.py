@@ -25,6 +25,7 @@ SHARED_DATA={}
 functions.filters.CACHE=SHARED_DATA
 functions.commands.CACHE=SHARED_DATA
 functions.regex.CACHE=SHARED_DATA
+functions.callbacks.CACHE=SHARED_DATA
 
 
 # ERROR HANDLER
@@ -94,6 +95,9 @@ if __name__=="__main__":
     dispatcher.add_handler(ext.MessageHandler(ext.Filters.text, _incomming_message))
     
     # callback query handlers
+    dispatcher.add_handler(ext.CallbackQueryHandler(functions.callbacks.empty, pattern=r'empty'))
+    dispatcher.add_handler(ext.CallbackQueryHandler(functions.callbacks.craft_resume, pattern=r'craft_resume'))
+    dispatcher.add_handler(ext.CallbackQueryHandler(functions.callbacks.craft_all, pattern=r'craft_all'))
     
     # error handlers
     dispatcher.add_error_handler(_error)
