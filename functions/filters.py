@@ -30,6 +30,9 @@ def _action_fight(cid, user, content, update, context):
     elif b"It's an ambush!" in content:
         ambush="Ambush without loot!\n"
         delta_upper=15
+    # animals hunt 
+    elif b"Bear" in content or b"Boar" in content or b"Wolf" in content:
+        ambush=u"\U0001F417 Wild animals hunt!\n"
     if settings.VERBOSE:
         print("            Hostile creatures:", delta_lower, delta_upper, ambush)
     # mention users
