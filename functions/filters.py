@@ -19,7 +19,7 @@ def _action_fight(cid, user, content, update, context):
     delta_lower=20
     # forbidden champion 
     if b"Forbidden Champion lvl." in content:
-        ambush=u"\U000026A0 Defeat the \U0000269C CHAMPION!\n\U0001F534 Don't join if you can stomp"
+        ambush=u"\U000026A0 Defeat the \U0000269C CHAMPION!\n\U0001F534 Don't join if you can stomp\n"
         delta_upper=1000
         delta_lower=1000
     # ambush with loot locked

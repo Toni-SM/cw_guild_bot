@@ -130,6 +130,14 @@ def pin(update, context):
     Pin a message
     """
     cid=update.message.chat.id
+    try:
+        reply=update.message.reply_to_message
+        context.bot.pin_chat_message(chat_id=cid, 
+                                     message_id=reply.message_id, 
+                                     disable_notification=None)
+        return
+    except Exception as e:
+        pass       
     # text
     text=" ".join(update.message.text.split(" ")[1:])
     if text:
@@ -137,7 +145,7 @@ def pin(update, context):
                                      message_id=update.message.message_id, 
                                      disable_notification=None)
     else:
-        text='Use /pin <i>text</i> for pin a message in the current chat'
+        text='Use /pin <i>text</i> or reply a message for pin some content in the current chat'
         context.bot.send_message(chat_id=cid, 
                                  text=text,
                                  parse_mode=telegram.ParseMode.HTML,
