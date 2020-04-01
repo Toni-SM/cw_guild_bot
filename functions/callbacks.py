@@ -14,7 +14,6 @@ def _craft(update):
     """
     """
     global CACHE
-    day_range=3
     today=datetime.datetime.today()
     recipes={}
     parts={}
@@ -46,7 +45,7 @@ def _craft(update):
             # validate the date
             t=datetime.datetime.fromisoformat(crafting["datetime"])
             tmp=(datetime.datetime.today()-t).total_seconds()/(24.0*60.0*60.0)
-            if tmp>day_range:
+            if tmp>int(model.get_data("CRAFT_OUTDATE_INTERVAL_DAYS", 3)):
                 owners+=u"\n    - {0} (\U0000231B {1} days ago)".format(html.escape(u.username), int(tmp))
             else:
                 owners+="\n    - {0}".format(html.escape(u.username))

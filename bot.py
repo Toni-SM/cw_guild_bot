@@ -108,6 +108,7 @@ if __name__=="__main__":
     
     # timing functions
     functions.timers.BOT=updater.bot
+    functions.timers.start()
     
     # notify the starting
     _notify_start(updater.bot)
