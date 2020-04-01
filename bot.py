@@ -74,11 +74,14 @@ if __name__=="__main__":
     updater=ext.Updater(settings.TOKEN, use_context=True, request_kwargs=REQUEST_KWARGS)
     dispatcher=updater.dispatcher
     
+    # admin command handlers
+    dispatcher.add_handler(ext.CommandHandler(["users", "users_list", "users_detail"], functions.admin.users))
+    dispatcher.add_handler(ext.CommandHandler(["data", "data_set", "data_delete"], functions.admin.manage_data))
+    dispatcher.add_handler(ext.CommandHandler(["message"], functions.admin.message))
+    
     # command handlers
     dispatcher.add_handler(ext.CommandHandler(["start", "restart"], functions.commands.start))
     dispatcher.add_handler(ext.CommandHandler(["help"], functions.commands.help))
-    dispatcher.add_handler(ext.CommandHandler(["users", "users_list", "users_detail"], functions.commands.users))
-    dispatcher.add_handler(ext.CommandHandler(["message"], functions.commands.message))
     dispatcher.add_handler(ext.CommandHandler(["pin"], functions.commands.pin))
     dispatcher.add_handler(ext.CommandHandler(["everybody"], functions.commands.everybody))
     dispatcher.add_handler(ext.CommandHandler(["elite"], functions.commands.elite))

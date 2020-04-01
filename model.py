@@ -54,7 +54,8 @@ class Data(Base):
     
 Base.metadata.create_all(_engine)
 
-# functions
+# User functions
+
 def subscribe(user):
     """
     Subscribe/add an user to the database
@@ -151,6 +152,17 @@ def update_user(user):
         return True
     Session.remove()
     return False
+    
+# Data functions
+    
+def data():
+    """
+    List all stored data
+    """
+    _session=Session(expire_on_commit=False)
+    response=_session.query(Data).order_by(Data.key).all()
+    Session.remove()
+    return response 
     
 def get_data(key, default=None):
     """
