@@ -3,6 +3,7 @@ import logging
 import telegram
 from telegram import ext
 
+import model
 import utils
 import settings
 import functions
@@ -28,6 +29,12 @@ functions.regex.CACHE=SHARED_DATA
 functions.callbacks.CACHE=SHARED_DATA
 functions.timers.CACHE=SHARED_DATA
 
+# variables
+
+model.set_data("CRAFT_OUTDATE_INTERVAL_HOURS", 8*3600)
+model.set_data("CRAFT_OUTDATE_INTERVAL_DAYS", 3)
+model.set_data("BATTLE_TIME_DELTA_MINUTES", 20)
+model.set_data("MENTION_ELITE_DELTA", 15)
 
 # ERROR HANDLER
 

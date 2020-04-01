@@ -125,7 +125,7 @@ def elite(update, context):
         if u.cw_level>max_cw_level:
             max_cw_level=u.cw_level
     for u in users:
-        if u.id==str(update.effective_user.id) or u.cw_level<max_cw_level-15:
+        if u.id==str(update.effective_user.id) or u.cw_level<max_cw_level-model.get_data("MENTION_ELITE_DELTA", 15):
             continue
         tmp+="@{0} ".format(u.username)
         i+=1
@@ -142,7 +142,7 @@ def elite(update, context):
     if tmp:
         try:
             context.bot.send_message(chat_id=cid, 
-                                     text=tmp,
+                                     text=u"\U0000270A Sir! Yes Sir!\n"+tmp,
                                      parse_mode=telegram.ParseMode.HTML,
                                      disable_web_page_preview=True)
         except Exception as e:

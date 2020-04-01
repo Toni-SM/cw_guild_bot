@@ -44,7 +44,7 @@ def _craft(update):
         if crafting and len(crafting.keys()):
             # validate the date
             t=datetime.datetime.fromisoformat(crafting["datetime"])
-            tmp=(datetime.datetime.today()-t).total_seconds()/(24.0*60.0*60.0)
+            tmp=(datetime.datetime.today()-t).total_seconds()/(24.0*3600.0)
             if tmp>int(model.get_data("CRAFT_OUTDATE_INTERVAL_DAYS", 3)):
                 owners+=u"\n    - {0} (\U0000231B {1} days ago)".format(html.escape(u.username), int(tmp))
             else:

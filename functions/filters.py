@@ -209,7 +209,7 @@ def roster(cid, user, content, update, context):
                                                    day=utcnow.day,
                                                    hour=int(t[0:2]),
                                                    minute=int(t[3:5]))).total_seconds()/60.0)
-    delta=int(model.get_data("BATTLE_TIME_DELTA", 20))
+    delta=int(model.get_data("BATTLE_TIME_DELTA_MINUTES", 20))
     time_list=[t>-delta and t<0 for t in time_list]
     print(time_list, delta)
     # call to the battle

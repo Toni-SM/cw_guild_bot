@@ -67,6 +67,7 @@ def stomp(update, context):
             
 def resource(update, context):
     """
+    Show info about an specific resource
     """
     global CACHE
     day_range=7

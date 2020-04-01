@@ -111,9 +111,9 @@ def manage_data(update, context):
         # list all pair key:value
         if update.message.text=="/data": 
             data=model.data()
-            text=u'\U0001F4C1 Registered data\n\nUse /data_set for add or modify a key\nUse /data_delete for remove a pair key:value\n\n'
+            text=u'\U0001F4C1 Registered data\n\nUse /data_set for add or modify a key\nUse /data_delete for remove data\n\n'
             for d in data:
-                tmp=u'<b>{0}</b>: {1} ({2})\n'.format(html.escape(d.key), html.escape(d.value), html.escape(d.type_of))
+                tmp=u'<b>key:</b> {0}\n<b>value:</b> {1} ({2})\n\n'.format(html.escape(d.key), html.escape(d.value), html.escape(d.type_of))
                 if len(text)+len(tmp)<telegram.constants.MAX_MESSAGE_LENGTH-5:
                     text+=tmp
                 else:
