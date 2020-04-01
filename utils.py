@@ -65,6 +65,8 @@ def item_is_crafteable(item, recipe_amount=0, part_amount=0):
         amount=5
     elif item["tier"]=="T4":
         amount=6
+    elif item["tier"]=="T5":
+        amount=9
     if amount and recipe_amount>0 and part_amount>=amount:
         return True
     return False

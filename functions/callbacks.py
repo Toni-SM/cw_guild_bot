@@ -63,7 +63,7 @@ def _craft(update):
                 else:
                     parts[k]=crafting["parts"][k]
     # list items
-    for i in range(1,103):
+    for i in range(1,125):
         code=str(i).zfill(2)
         item_recipe=utils.item_by_code("r{0}".format(code), "recipes")
         item_part=utils.item_by_code("k{0}".format(code), "parts")
