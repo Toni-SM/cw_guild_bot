@@ -105,6 +105,18 @@ def user_by_id(id):
     Session.remove()
     return None
     
+def user_by_cw_name(cw_name):
+    """
+    Get an User instance by its cw_name
+    """
+    _session=Session(expire_on_commit=False)
+    _user=_session.query(User).filter(User.cw_name==cw_name).first()
+    if _user:
+        Session.remove()
+        return _user
+    Session.remove()
+    return None
+    
 def filtered_users(user, delta_upper, delta_lower):
     """
     List of filtered users according to their level

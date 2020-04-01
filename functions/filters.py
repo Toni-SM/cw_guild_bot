@@ -14,27 +14,27 @@ def _action_fight(cid, user, content, update, context):
     """
     Mention users for a fight
     """
-    ambush="Just another fight!\n"
+    header="Just another fight!\n"
     delta_upper=10
     delta_lower=20
     # forbidden champion 
     if b"Forbidden Champion lvl." in content:
-        ambush=u"\U000026A0 Defeat the \U0000269C CHAMPION!\n\U0001F534 Don't join if you can stomp\n"
+        header=u"\U000026A0 Defeat the \U0000269C CHAMPION!\n\U0001F534 Don't join if you can stomp\n"
         delta_upper=1000
         delta_lower=1000
     # ambush with loot locked
     elif b"It's an ambush! Loot is locked till the end of the fight" in content:
-        ambush=u"\U0001F4E6 Ambush with loot locked!\n"
+        header=u"\U0001F4E6 Ambush with loot locked!\n"
         delta_upper=15
     # ambush without loot
     elif b"It's an ambush!" in content:
-        ambush="Ambush without loot!\n"
+        header="Ambush without loot!\n"
         delta_upper=15
     # animals hunt 
     elif b"Bear" in content or b"Boar" in content or b"Wolf" in content:
-        ambush=u"\U0001F417 Wild animals hunt!\n"
+        header=u"\U0001F417 Wild animals hunt!\n"
     if settings.VERBOSE:
-        print("            Hostile creatures:", delta_lower, delta_upper, ambush)
+        print("            Hostile creatures:", delta_lower, delta_upper, header)
     # mention users
     users=model.filtered_users(user, delta_upper, delta_lower)
     i=0
@@ -48,7 +48,7 @@ def _action_fight(cid, user, content, update, context):
             i=0
             try:
                 context.bot.send_message(chat_id=cid, 
-                                         text=ambush+tmp,
+                                         text=header+tmp,
                                          parse_mode=telegram.ParseMode.HTML,
                                          disable_web_page_preview=True)
             except Exception as e:
@@ -57,7 +57,7 @@ def _action_fight(cid, user, content, update, context):
     if tmp:
         try:
             context.bot.send_message(chat_id=cid, 
-                                     text=ambush+tmp,
+                                     text=header+tmp,
                                      parse_mode=telegram.ParseMode.HTML,
                                      disable_web_page_preview=True)
         except Exception as e:
@@ -198,7 +198,54 @@ def _action_crafting_list(cid, user, content, update, context):
         else:
             utils._admin_error(context, "_action_crafting_list", user=user, error="no registered user", trace=False)
         
-    
+def roster(cid, user, content, update, context):
+    content=content.split(b'\\n')[1:]
+    # chek UTC battle
+    utcnow=datetime.datetime.utcnow()
+    time_list=[]
+    for t in settings.BATTLES:
+        time_list.append((utcnow-datetime.datetime(year=utcnow.year,
+                                                   month=utcnow.month,
+                                                   day=utcnow.day,
+                                                   hour=int(t[0:2]),
+                                                   minute=int(t[3:5]))).total_seconds()/60.0)
+    delta=int(model.get_data("BATTLE_TIME_DELTA", 20))
+    time_list=[t>-delta and t<0 for t in time_list]
+    print(time_list, delta)
+    # call to the battle
+    if True in time_list:
+        i=0
+        tmp=""
+        header=u'\U0001F4E2 Attention to the battle order\n'
+        for player in content:
+            if b' [\\u2694] ' not in player and b' [\\U0001f6e1] ' not in player:
+                cw_name=b' '.join(player.split(b' ')[3:]).decode()
+                user=model.user_by_cw_name(cw_name)
+                if user:
+                    tmp+="@{0} ".format(user.username)
+                    i+=1
+                if not i%3:
+                    i=0
+                    try:
+                        if tmp:
+                            context.bot.send_message(chat_id=cid, 
+                                                     text=header+tmp,
+                                                     parse_mode=telegram.ParseMode.HTML,
+                                                     disable_web_page_preview=True)
+                    except Exception as e:
+                        utils._admin_error(context, "_action_roster: attention", user=user, error=str(e))
+                    tmp=""
+        if tmp:
+            try:
+                context.bot.send_message(chat_id=cid, 
+                                         text=header+tmp,
+                                         parse_mode=telegram.ParseMode.HTML,
+                                         disable_web_page_preview=True)
+            except Exception as e:
+                utils._admin_error(context, "_action_roster: attention", user=user, error=str(e))
+           
+        # (datetime.today()-datetime.utcnow()).total_seconds()
+
 
 # MAIN FUNCTION
 
@@ -246,6 +293,11 @@ def forwarded(update, context):
         # guild warehouse
         if content.split(b'\\n')[0]==b'Guild Warehouse:':
             _action_reinforcement(cid, user, content, update, context)
+            return
+            
+        # guild roster
+        if content.split(b'\\n')[0].startswith(b'\\U0001f954') and content.split(b'\\n')[-1].startswith(b'#'):
+            roster(cid, user, content, update, context)
             return
             
         # parts and recipes
