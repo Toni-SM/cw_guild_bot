@@ -26,6 +26,7 @@ functions.filters.CACHE=SHARED_DATA
 functions.commands.CACHE=SHARED_DATA
 functions.regex.CACHE=SHARED_DATA
 functions.callbacks.CACHE=SHARED_DATA
+functions.timers.CACHE=SHARED_DATA
 
 
 # ERROR HANDLER
@@ -101,6 +102,9 @@ if __name__=="__main__":
     
     # error handlers
     dispatcher.add_error_handler(_error)
+    
+    # timing functions
+    functions.timers.BOT=updater.bot
     
     # notify the starting
     _notify_start(updater.bot)
