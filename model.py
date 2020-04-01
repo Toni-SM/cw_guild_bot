@@ -1,5 +1,6 @@
 import json
 import html
+import pydoc
 import sqlalchemy
 from datetime import datetime
 from sqlalchemy.ext.declarative import declarative_base
@@ -39,6 +40,18 @@ class User(Base):
     def __repr__(self):
         return '<User {0}: {1} ({2})>'.format(self.id, self.username, self.full_name)
         
+class Data(Base):
+    """
+    Data model
+    """
+    __tablename__="data"
+    key=sqlalchemy.Column(sqlalchemy.String, primary_key=True, unique=True)
+    value=sqlalchemy.Column(sqlalchemy.String, unique=False, default="")
+    type_of=sqlalchemy.Column(sqlalchemy.String, unique=False, default="str")
+    
+    def __repr__(self):
+        return '<Data>'
+    
 Base.metadata.create_all(_engine)
 
 # functions
@@ -134,6 +147,69 @@ def update_user(user):
             print("Exception model.update_user", e)
             Session.remove()
             return False
+        Session.remove()
+        return True
+    Session.remove()
+    return False
+    
+def get_data(key, default=None):
+    """
+    Get data from database
+    Returns the default value if key does not exists
+    """
+    _session=Session(expire_on_commit=False)
+    _data=_session.query(Data).get(key.upper())
+    if _data:
+        Session.remove()
+        f=pydoc.locate(_data.type_of)
+        return f(_data.value)
+    Session.remove()
+    return default
+    
+def set_data(key, value):
+    """
+    Set data on database
+    """
+    _session=Session(expire_on_commit=False)
+    _data=_session.query(Data).get(key.upper())
+    if _data:
+        try:
+            _data.value=str(value)
+            _data.type_of=type(value).__name__
+            _session.add(_data)
+            _session.commit()
+        except Exception as e:
+            print("Exception model.update_data", e)
+            Session.remove()
+            return False
+        Session.remove()
+        return True
+    else:
+        try:
+            _data=Data(key=key.upper(),
+                       value=str(value),
+                       type_of=type(value).__name__)
+            _session.add(_data)
+            _session.commit()
+            _session.expunge_all()
+            Session.remove()
+            return True
+        except Exception as e:
+            print("Exception model.new_data", e)
+            Session.remove()
+            return False
+    Session.remove()
+    return False
+
+def del_data(key):
+    """
+    Remove data from database
+    """
+    _session=Session(expire_on_commit=False)
+    _data=_session.query(Data).get(key)
+    if _data:
+        _session.delete(_data)
+        _session.commit()
         Session.remove()
         return True
     Session.remove()
