@@ -44,9 +44,18 @@ def users(update, context):
             # detailed list
             elif update.message.text=="/users_detail":            
                 for user in users:
-                    text="<b>id:</b> {0}\n<b>username:</b> {1}\n<b>full_name:</b> {2}\n<b>link:</b> {3}\n<b>cw_name:</b> {4}\n<b>cw_level:</b> {5}\n<b>updated:</b> {6}\n<b>crafting:</b> {7}\n\n<code>/craft_reset {0}</code>".format(user.id, html.escape(user.username), html.escape(user.full_name), html.escape(user.link), html.escape(user.cw_name), user.cw_level, html.escape(user.updated), html.escape(user.crafting))
+                    text="<b>id:</b> {0}\n<b>username:</b> {1}\n<b>full_name:</b> {2}\n<b>link:</b> {3}\n<b>cw_name:</b> {4}\n<b>cw_level:</b> {5}\n<b>updated:</b> {6}\n<b>crafting:</b> {7}\n\n<code>/craft_reset {0}</code>\n<code>/users_delete {0}</code>".format(user.id, html.escape(user.username), html.escape(user.full_name), html.escape(user.link), html.escape(user.cw_name), user.cw_level, html.escape(user.updated), html.escape(user.crafting))
                     context.bot.send_message(chat_id=settings.ADMIN_ID, 
                                              text=text,
+                                             parse_mode=telegram.ParseMode.HTML,
+                                             disable_web_page_preview=True)
+            # delete user
+            elif update.message.text.split(" ")[0]=="/users_delete" and len(update.message.text.split(" "))==2:
+                user=model.user_by_id(update.message.text.split(" ")[1])
+                if user:
+                    status=model.unsubscribe(user)
+                    context.bot.send_message(chat_id=settings.ADMIN_ID, 
+                                             text="User unsubscription operation [{1}]... for @{0}".format(html.escape(user.username), status),
                                              parse_mode=telegram.ParseMode.HTML,
                                              disable_web_page_preview=True)
     except Exception as e:
@@ -98,7 +107,7 @@ def manage_data(update, context):
     if str(update.effective_user.id)==settings.ADMIN_ID:
         if update.message.text=="/data": 
             data=model.data()
-            text=u'\U0001F4C1 Registered data\n\n'
+            text=u'\U0001F4C1 Registered data\n\nUse /data_set for add or modify a key\nUse /data_delete for remove a pair key:value\n\n'
             for d in data:
                 tmp=u'<b>{0}</b>: {1} ({2})\n'.format(html.escape(d.key), html.escape(d.value), html.escape(d.type_of))
                 if len(text)+len(tmp)<telegram.constants.MAX_MESSAGE_LENGTH-5:

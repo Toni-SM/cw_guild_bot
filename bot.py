@@ -75,7 +75,7 @@ if __name__=="__main__":
     dispatcher=updater.dispatcher
     
     # admin command handlers
-    dispatcher.add_handler(ext.CommandHandler(["users", "users_list", "users_detail"], functions.admin.users))
+    dispatcher.add_handler(ext.CommandHandler(["users", "users_list", "users_detail", "users_delete"], functions.admin.users))
     dispatcher.add_handler(ext.CommandHandler(["data", "data_set", "data_delete"], functions.admin.manage_data))
     dispatcher.add_handler(ext.CommandHandler(["message"], functions.admin.message))
     
