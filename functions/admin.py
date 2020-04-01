@@ -104,7 +104,11 @@ def message(update, context):
         utils._admin_error(context, "/message", error=str(e), trace=False)
    
 def manage_data(update, context):
+    """
+    Manage stored data on database
+    """
     if str(update.effective_user.id)==settings.ADMIN_ID:
+        # list all pair key:value
         if update.message.text=="/data": 
             data=model.data()
             text=u'\U0001F4C1 Registered data\n\nUse /data_set for add or modify a key\nUse /data_delete for remove a pair key:value\n\n'
@@ -123,10 +127,14 @@ def manage_data(update, context):
                                          text=text,
                                          parse_mode=telegram.ParseMode.HTML,
                                          disable_web_page_preview=True)
+        # add or modify a pair key:value
         elif update.message.text.split(" ")[0]=="/data_set":
             tmp=update.message.text.split(" ")
             if len(tmp)>2:
-                status=model.set_data(tmp[1].upper(), " ".join(tmp[2:]))
+                value=" ".join(tmp[2:])
+                if tmp[2]=="this":
+                    value=update.message.chat.id
+                status=model.set_data(tmp[1].upper(), value)
                 context.bot.send_message(chat_id=settings.ADMIN_ID, 
                                          text="<b>Data (set)</b>\n\nKey: {0}\nValue: {1}\nStatus: {2}".format(html.escape(tmp[1].upper()), html.escape(" ".join(tmp[2:])), status),
                                          parse_mode=telegram.ParseMode.HTML,
@@ -136,6 +144,7 @@ def manage_data(update, context):
                                          text="<b>Invalid format</b>\n<code>/data_set KEY VALUE</code>",
                                          parse_mode=telegram.ParseMode.HTML,
                                          disable_web_page_preview=True)
+        # delete a pair key:value
         elif update.message.text.split(" ")[0]=="/data_delete":
             tmp=update.message.text.split(" ")
             if len(update.message.text.split(" "))>1:
