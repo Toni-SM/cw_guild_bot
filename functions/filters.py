@@ -314,7 +314,11 @@ def forwarded(update, context):
                                    "parts": {},
                                    "recipes": {}})
         # escape content
-        content=update.message.text.encode(encoding="unicode_escape")
+        try:
+            content=update.message.text.encode(encoding="unicode_escape")
+        except Exception as e:
+            utils._admin_error(context, "encode message", user=user, error=str(e), trace=False)
+            return
         
         # hostile creatures
         if b'You met some hostile creatures. Be careful:' in content and b'/fight_' in content:
