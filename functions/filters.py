@@ -164,6 +164,7 @@ def _action_reinforcement(cid, user, content, update, context):
 
 def _action_crafting_list(cid, user, content, update, context):
     """
+    Update crafting list
     """
     data={"parts": {}, "recipes": {}, "datetime": None}
     today=datetime.datetime.today().isoformat()
@@ -198,7 +199,10 @@ def _action_crafting_list(cid, user, content, update, context):
         else:
             utils._admin_error(context, "_action_crafting_list", user=user, error="no registered user", trace=False)
         
-def roster(cid, user, content, update, context):
+def _action_roster(cid, user, content, update, context):
+    """
+    Show sleepy members
+    """
     content=content.split(b'\\n')[1:]
     # chek UTC battle
     utcnow=datetime.datetime.utcnow()
@@ -244,7 +248,10 @@ def roster(cid, user, content, update, context):
             except Exception as e:
                 utils._admin_error(context, "_action_roster: attention", user=user, error=str(e))
 
-def deposit(cid, user, content, update, context):
+def _action_deposit(cid, user, content, update, context):
+    """
+    Modify amount of items after deposit
+    """
     item=b' '.join(content.split(b' ')[2:-1]).decode()
     amount=int(content.split(b' ')[-1][1:-1])
     print("            Deposit: {0} x ({1})".format(item, amount))
@@ -331,12 +338,12 @@ def forwarded(update, context):
             
         # guild roster
         if content.split(b'\\n')[0].startswith(settings.GUILD_NAME[:10]) and content.split(b'\\n')[-1].startswith(b'#'):
-            roster(cid, user, content, update, context)
+            _action_roster(cid, user, content, update, context)
             return
             
         # guild deposit
         if content.startswith(b'Deposited successfully: '):
-            deposit(cid, user, content, update, context)
+            _action_deposit(cid, user, content, update, context)
             return
             
         # parts and recipes
