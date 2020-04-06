@@ -211,7 +211,7 @@ def roster(cid, user, content, update, context):
                                                    minute=int(t[3:5]))).total_seconds()/60.0)
     delta=int(model.get_data("BATTLE_TIME_DELTA_MINUTES", 20))
     time_list=[t>-delta and t<0 for t in time_list]
-    print(time_list, delta)
+    print("            Roster", time_list, delta)
     # call to the battle
     if True in time_list:
         i=0
@@ -296,7 +296,7 @@ def forwarded(update, context):
             return
             
         # guild roster
-        if content.split(b'\\n')[0].startswith(b'\\U0001f954') and content.split(b'\\n')[-1].startswith(b'#'):
+        if content.split(b'\\n')[0].startswith(settings.GUILD_NAME[:10]) and content.split(b'\\n')[-1].startswith(b'#'):
             roster(cid, user, content, update, context)
             return
             
