@@ -243,8 +243,42 @@ def roster(cid, user, content, update, context):
                                          disable_web_page_preview=True)
             except Exception as e:
                 utils._admin_error(context, "_action_roster: attention", user=user, error=str(e))
-           
-        # (datetime.today()-datetime.utcnow()).total_seconds()
+
+def deposit(cid, user, content, update, context):
+    item=b' '.join(content.split(b' ')[2:-1]).decode()
+    amount=int(content.split(b' ')[-1][1:-1])
+    print("            Deposit: {0} x ({1})".format(item, amount))
+    item=utils.item_by_name(item)
+    if item:
+        item_type=""
+        if item["code"].startswith('r'):
+            item_type="recipes"
+        elif item["code"].startswith('k'):
+            item_type="parts"
+        # modify the crafting data
+        if item_type:
+            # guild warehouse
+            if item["name"] in CACHE["guild"][item_type]:
+                CACHE["guild"][item_type][item["name"]]+=amount
+            else:
+                CACHE["guild"][item_type][item["name"]]=amount
+            # user
+            u=model.user_by_id(update.effective_user.id)
+            if u:
+                crafting=json.loads(u.crafting)
+                if crafting and len(crafting.keys()):
+                    if item["name"] in crafting[item_type]:
+                        crafting[item_type][item["name"]]-=amount
+                        if crafting[item_type][item["name"]]<1:
+                            del crafting[item_type][item["name"]]
+                    # store data
+                    user.crafting=json.dumps(crafting)
+                    if model.user_by_id(update.effective_user.id):
+                        status=model.update_user(user)
+                        if not status:
+                            utils._admin_error(context, "_action_deposit", user=user, error="update: False", trace=False)
+                    else:
+                        utils._admin_error(context, "_action_deposit", user=user, error="no registered user", trace=False)
 
 
 # MAIN FUNCTION
@@ -298,6 +332,11 @@ def forwarded(update, context):
         # guild roster
         if content.split(b'\\n')[0].startswith(settings.GUILD_NAME[:10]) and content.split(b'\\n')[-1].startswith(b'#'):
             roster(cid, user, content, update, context)
+            return
+            
+        # guild deposit
+        if content.startswith(b'Deposited successfully: '):
+            deposit(cid, user, content, update, context)
             return
             
         # parts and recipes
