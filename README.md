@@ -6,7 +6,7 @@
 
 * List all owners of the crafting data
 * Generate the “easy to deposit” links for crafting data 
-* Notify outdated crafting data to the respective owner 
+* Notify outdated crafting data to the respective owner\*
 * Track crafting data deposition 
 * Reset all crafting data (/craft_reset)
 
@@ -14,7 +14,7 @@
 
 **Generate the “easy to deposit” missing resources list for repair/reinforce equipment sponsored by guild**, just forwarding the blacksmith's requirement list and the resource list of the guild (/g_stock_res)
 
-**Call to sleepy members to attend the battle orders**, just forwarding the guild's Roster a configurable amount of minutes (default: 20 minutes) before each battle 
+**Call to sleepy members to attend the battle orders**, just forwarding the guild's Roster a configurable amount of minutes (default: 20 minutes) before each battle\*
 
 **Pin a message on the guild chat** (even if you are not administrator of the group)with a simple command /pin
 
@@ -22,7 +22,7 @@
 
 **Mention all members of the guild** with a simple command /everybody
 
-
+Note: It is necessary forward the battle report (/report) to the guild chat or to the bot in order to keep updated  the info of the members on database or in order to include a new member in guild It is necessary forward the battle report (/report) to the guild chat or to the bot in order to keep the info of the member updated on database or in order to include a new member to the guild
 
 
 
@@ -97,3 +97,7 @@ To run the code just execute the next line on the root project folder... and enj
 ```
 $ python bot.py
 ```
+
+## Advanced features for the administrator of the bot
+
+\*There are a lot of advanced features that are only accessible by administrator (like edit, delete or list all registered users, editar bot's variables for manage some features). If you want to use this (free of charge), please contact me through Telegram [@Toni_SM](https://telegram.me/Toni_SM)
