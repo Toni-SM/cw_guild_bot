@@ -16,7 +16,7 @@
 
 **Call to sleepy members to attend the battle orders**, just forwarding the guild's Roster a configurable amount of minutes (default: 20 minutes) before each battle\*
 
-**Pin a message on the guild chat** (even if you are not administrator of the group)with a simple command /pin
+**Pin a message on the guild chat** (even if you are not administrator of the group) with a simple command /pin
 
 **Mention all stronger members** of the guild with a simple command /elite 
 
