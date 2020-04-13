@@ -22,14 +22,14 @@
 
 **Mention all members of the guild** with a simple command /everybody
 
-Note: It is necessary forward the battle report (/report) to the guild chat or to the bot in order to keep updated  the info of the members on database or in order to include a new member in guild It is necessary forward the battle report (/report) to the guild chat or to the bot in order to keep the info of the member updated on database or in order to include a new member to the guild
+Note: It is necessary forward the battle report (/report) to the guild chat or to the bot in order to keep updated  the info of the members on database or to include a new member in guild
 
 
 
 ## Instructions
 
 ### I) Project dependencies
-Install the necessary libraries from `Python Command Line` 
+Clone or download the project and install the necessary libraries from `Python Command Line` 
 
 ```
 $ python -m pip install python-telegram-bot SQLAlchemy
