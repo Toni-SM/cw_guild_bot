@@ -100,4 +100,4 @@ $ python bot.py
 
 ## Advanced features for the administrator of the bot
 
-\*There are a lot of advanced features that are only accessible by administrator (like edit, delete or list all registered users, editar bot's variables for manage some features). If you want to use this (free of charge), please contact me through Telegram [@Toni_SM](https://telegram.me/Toni_SM)
+\*There are a lot of advanced features that are only configurable by administrator (like edit, delete or list all registered users, edit bot's variables for manage some features, etc.). If you want to use this (free of charge), please contact me through Telegram [@Toni_SM](https://telegram.me/Toni_SM)
