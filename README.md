@@ -1,5 +1,11 @@
 # Guild helper bot for ChatWars (Tested on ChatWars v2)
 
+* Free of backdoors and spying code!
+* Subscribe (Watch > Releases only / Watching) to keep updated with new features and changes
+
+I love this code. **Do you like it?**
+> Do [small actions](https://secure.xsolla.com/paystation2/?access_token=b1ogMalfXDjI7YGg3IYC41fvfDSC99Gx) **x** support this code!
+
 ## Features
 
 **Generate ready to craft list or full crafting list for the guild** with a simple command /craft. In order to use this feature the collectors (and others) must forward they crafting list from ChatWars to the guild chat or to this bot. Also someone should forward the recipes  (/g_stock_rec) and parts (/g_stock_parts) of the guild
