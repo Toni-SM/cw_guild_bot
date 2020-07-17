@@ -56,8 +56,12 @@ def item_is_crafteable(item, recipe_amount=0, part_amount=0):
     elif item["code"][1:] in ['100', '101', '102']:
         amount=4
     # adjust some weapons
-    elif item["code"][1:] in ['91', '96', '97']:
+    elif item["code"][1:] in ['91', '96', '97', '103']:
         amount=5
+    elif item["code"][1:] in ['108', '110']:
+        amount=7
+    elif item["code"][1:] in ['105', '107', '109', '111']:
+        amount=9
     # iterate by tiers
     elif item["tier"]=="T2":
         amount=3
