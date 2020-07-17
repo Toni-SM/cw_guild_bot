@@ -80,7 +80,7 @@ def resource(update, context):
     # code
     r_recipe=utils.item_by_code("r{0}".format(update.message.text.split("@")[0][2:]), "recipes")
     r_recipe_amount=0
-    r_part=utils.item_by_code("k{0}".format(update.message.text.split("@")[0][2:]), "parts")
+    r_part=utils.item_by_code("k{0}".format(update.message.text.split("@")[0][2:]), "parts", adjust_part_code=True)
     r_part_amount=0
     if r_recipe and r_part:
         # guild

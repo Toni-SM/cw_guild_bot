@@ -111,10 +111,10 @@ def _action_reinforcement(cid, user, content, update, context):
             tmp=b' '.join(c.split(b' ')[1:]).split(b' x ')
             # recipe
             if tmp_code.startswith(b'r'):
-                CACHE["guild"]["recipes"][tmp[0].decode()]=int(tmp[1])
+                CACHE["guild"]["recipes"][tmp[0].decode().lower()]=int(tmp[1])
             # part
             elif tmp_code.startswith(b'k'):
-                CACHE["guild"]["parts"][tmp[0].decode()]=int(tmp[1])
+                CACHE["guild"]["parts"][tmp[0].decode().lower()]=int(tmp[1])
             # resource
             else:
                 CACHE[user.id]["resources"]["guild"][tmp[0].decode()]=int(tmp[1])
@@ -166,6 +166,7 @@ def _action_crafting_list(cid, user, content, update, context):
     """
     Update crafting list
     """
+    print("            Crafting tab")
     data={"parts": {}, "recipes": {}, "datetime": None}
     today=datetime.datetime.today().isoformat()
     for c in content.split(b'\\n'):
@@ -178,7 +179,7 @@ def _action_crafting_list(cid, user, content, update, context):
             tmp=c.split(b'\\U0001f4c3')[1].split(b' /view_r')[0]
             tmp=tmp.split(b' (')
             if len(tmp)==2 and tmp[1].endswith(b')'):
-                c_name=tmp[0].decode()
+                c_name=tmp[0].decode().lower()
                 c_amount=int(tmp[1][:-1])
                 data["recipes"][c_name]=c_amount
                 data["datetime"]=today
@@ -186,7 +187,7 @@ def _action_crafting_list(cid, user, content, update, context):
         else:
             tmp=c.split(b' (')
             if len(tmp)==2 and tmp[1].endswith(b')'):
-                c_name=tmp[0].decode()
+                c_name=tmp[0].decode().lower()
                 c_amount=int(tmp[1][:-1])
                 data["parts"][c_name]=c_amount
                 data["datetime"]=today
@@ -316,6 +317,7 @@ def forwarded(update, context):
         # escape content
         try:
             content=update.message.text.encode(encoding="unicode_escape")
+            # print(content)
         except Exception as e:
             utils._admin_error(context, "encode message", user=user, error=str(e), trace=False)
             return
@@ -351,5 +353,7 @@ def forwarded(update, context):
             return
             
         # parts and recipes
-        _action_crafting_list(cid, user, content, update, context)
-        
+        if (b'(' in content and b')' in content) and not (b'Equipment' in content or b'Storage' in content or b'/use_' in content or b'U0001f3f7' in content):
+            _action_crafting_list(cid, user, content, update, context)
+            return
+            

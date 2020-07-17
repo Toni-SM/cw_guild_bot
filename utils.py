@@ -36,7 +36,19 @@ def item_by_name(item_name, item_type=None):
                     return ITEMS[t][k]
     return {}
    
-def item_by_code(item_code, item_type=None):
+def item_by_code(item_code, item_type=None, adjust_part_code=False):
+    # adjust part code (overseer)
+    if adjust_part_code:
+        if item_code=="k116":
+            item_code="k117"
+        elif item_code=="k117":
+            item_code="k118"
+        elif item_code=="k118":
+            item_code="k119"
+        elif item_code=="k119":
+            item_code="k120"
+        elif item_code=="k120":
+            item_code="k116"
     if item_type in ITEMS:
         for k in ITEMS[item_type]:
             if ITEMS[item_type][k]["code"]==str(item_code):
