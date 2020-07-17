@@ -73,6 +73,7 @@ def _craft(update):
             crafteable=u'\U00002705' if is_crafteable else u'\U0001F17E'
             text_full_list+="\n/w{0}  {4}  {1} | {2}  {3}".format(code, r_recipe, r_part, item_recipe["name"][:-7], crafteable)
             if is_crafteable:
+                crafteable=utils.emoji_tier(item_recipe["tier"])
                 text_ready_list+="\n/w{0}  {4}  {1} | {2}  {3}".format(code, r_recipe, r_part, item_recipe["name"][:-7], crafteable)
     return text_full_list, text_ready_list, owners
 

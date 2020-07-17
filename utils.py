@@ -71,6 +71,20 @@ def item_is_crafteable(item, recipe_amount=0, part_amount=0):
         return True
     return False
     
+def emoji_tier(tier):
+    # iterate by tiers
+    if tier.lower()=="t2":
+        return u'\U0001F4D7'
+    elif tier.lower()=="t3":
+        return u'\U0001F4D8'
+    elif tier.lower()=="t4":
+        return u'\U0001F4D9'
+    elif tier.lower()=="t5":
+        return u'\U0001F4D2'
+    return u'\U0001F4DA'
+    
+    
+    
 if __name__=="__main__":
     print("")
     print("item_by_name")
