@@ -266,19 +266,19 @@ def _action_deposit(cid, user, content, update, context):
         # modify the crafting data
         if item_type:
             # guild warehouse
-            if item["name"] in CACHE["guild"][item_type]:
-                CACHE["guild"][item_type][item["name"]]+=amount
+            if item["name"].lower() in CACHE["guild"][item_type]:
+                CACHE["guild"][item_type][item["name"].lower()]+=amount
             else:
-                CACHE["guild"][item_type][item["name"]]=amount
+                CACHE["guild"][item_type][item["name"].lower()]=amount
             # user
             u=model.user_by_id(update.effective_user.id)
             if u:
                 crafting=json.loads(u.crafting)
                 if crafting and len(crafting.keys()):
-                    if item["name"] in crafting[item_type]:
-                        crafting[item_type][item["name"]]-=amount
-                        if crafting[item_type][item["name"]]<1:
-                            del crafting[item_type][item["name"]]
+                    if item["name"].lower() in crafting[item_type]:
+                        crafting[item_type][item["name"].lower()]-=amount
+                        if crafting[item_type][item["name"].lower()]<1:
+                            del crafting[item_type][item["name"].lower()]
                     # store data
                     user.crafting=json.dumps(crafting)
                     if model.user_by_id(update.effective_user.id):

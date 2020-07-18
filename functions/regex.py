@@ -86,12 +86,12 @@ def resource(update, context):
         # guild
         if "guild" in CACHE:
             # recipes
-            tmp=CACHE["guild"]["recipes"].get(r_recipe["name"], 0)
+            tmp=CACHE["guild"]["recipes"].get(r_recipe["name"].lower(), 0)
             if tmp:
                 r_recipe_amount+=tmp
                 recipes+="\n    - {0} x {1}".format(settings.GUILD_NAME.decode('unicode_escape'), tmp)
             # parts
-            tmp=CACHE["guild"]["parts"].get(r_part["name"], 0)
+            tmp=CACHE["guild"]["parts"].get(r_part["name"].lower(), 0)
             if tmp:
                 r_part_amount+=tmp
                 parts+="\n    - {0} x {1}".format(settings.GUILD_NAME.decode('unicode_escape'), tmp)
@@ -105,12 +105,12 @@ def resource(update, context):
                 if (datetime.datetime.today()-t).total_seconds()/(day_range*24.0*60.0*60.0)>1:
                     dated=u' \U0000231B'
                 # recipes
-                tmp=crafting["recipes"].get(r_recipe["name"], 0)
+                tmp=crafting["recipes"].get(r_recipe["name"].lower(), 0)
                 if tmp:
                     r_recipe_amount+=tmp
                     recipes+='\n    - <a href="https://t.me/share/url?url=/g_deposit%20{2}%20{1}">{0}</a> x {1}{3}'.format(html.escape(u.username), tmp, r_recipe["code"], dated)
                 # parts
-                tmp=crafting["parts"].get(r_part["name"], 0)
+                tmp=crafting["parts"].get(r_part["name"].lower(), 0)
                 if tmp:
                     r_part_amount+=tmp
                     parts+='\n    - <a href="https://t.me/share/url?url=/g_deposit%20{2}%20{1}">{0}</a> x {1}{3}'.format(html.escape(u.username), tmp, r_part["code"], dated)

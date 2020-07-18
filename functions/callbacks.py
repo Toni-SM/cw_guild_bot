@@ -62,13 +62,15 @@ def _craft(update):
                 else:
                     parts[k]=crafting["parts"][k]
     # list items
+    print(recipes)
+    print(parts)
     for i in range(1,125):
         code=str(i).zfill(2)
         item_recipe=utils.item_by_code("r{0}".format(code), "recipes")
         item_part=utils.item_by_code("k{0}".format(code), "parts", adjust_part_code=True)
         if item_recipe and item_part:
-            r_recipe=recipes.get(item_recipe["name"], 0)
-            r_part=parts.get(item_part["name"], 0)
+            r_recipe=recipes.get(item_recipe["name"].lower(), 0)
+            r_part=parts.get(item_part["name"].lower(), 0)
             is_crafteable=utils.item_is_crafteable(item_recipe, r_recipe, r_part)
             crafteable=u'\U00002705' if is_crafteable else u'\U0001F17E'
             text_full_list+="\n/w{0}  {4}  {1} | {2}  {3}".format(code, r_recipe, r_part, item_recipe["name"][:-7], crafteable)
