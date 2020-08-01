@@ -106,6 +106,15 @@ def _action_reinforcement(cid, user, content, update, context):
         # process request
         if settings.VERBOSE:
             print("            Guild Warehouse")
+        # clean old recipes and parts
+        if len(content.split(b'\\n'))>1:
+            if content.split(b'\\n')[1].startswith(b'r'):
+                print("            clean recipes")
+                CACHE["guild"]["recipes"]={}
+            elif content.split(b'\\n')[1].startswith(b'k'):
+                print("            clean parts")
+                CACHE["guild"]["parts"]={}
+        # cache data
         for c in content.split(b'\\n')[1:]:
             tmp_code=c.split(b' ')[0]
             tmp=b' '.join(c.split(b' ')[1:]).split(b' x ')
