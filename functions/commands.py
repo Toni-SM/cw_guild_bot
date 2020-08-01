@@ -214,13 +214,17 @@ def todo(update, context):
         pass       
     
     # show list
-    text=""
+    text=[]
     print(data)
     for d in data:
-        text+="{0} - {1}\n        /todo_{3}check_{2}\n        /todo_delete_{2}\n".format(u'\U00002705' if d["checked"] else u'\U0001F17E', d["text"], d["uid"], 'un' if d["checked"] else '')
+        tmp="{0} - {1}\n        /todo_{3}check_{2}\n        /todo_delete_{2}".format(u'\U00002705' if d["checked"] else u'\U0001F17E', d["text"], d["uid"], 'un' if d["checked"] else '')
+        if d["checked"]:
+            text.insert(0, tmp)
+        else:
+            text.append(tmp)
     if text:
         context.bot.send_message(chat_id=cid, 
-                                 text=text+"\n\nReply a message with /todo command to add it in this list (this action append each line of the message as a single item to the list)",
+                                 text="\n".join(text)+"\n\nReply a message with /todo command to add it in this list (this action append each line of the message as a single item to the list)",
                                  parse_mode=telegram.ParseMode.HTML,
                                  disable_web_page_preview=True)
     else:
