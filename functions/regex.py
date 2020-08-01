@@ -124,5 +124,51 @@ def resource(update, context):
                                  disable_web_page_preview=True)             
     else:
         context.bot.send_message(chat_id=cid, 
-                                 text=settings.MESSAGES["unknow"],
+                                 text=settings.MESSAGES["unknow"].format(""),
                                  disable_web_page_preview=True)
+
+def todo_edit(update, context):
+    """
+    Edit todo
+    """
+    action_status=False
+    action_text=False
+    action=""
+    cid=update.message.chat.id
+    text=update.message.text.split("_")
+    if len(text)==3:
+        action=text[1]
+        uid=text[2]
+        # get content
+        data=json.loads(utils.todo_get_data().value)
+        # apply action
+        if action=="check" or action=="uncheck":
+            print("TODO CHECK/UNCHECK", action, uid)
+            for d in data:
+                if d["uid"]==uid:
+                    if action=="check":
+                        d["checked"]=True
+                    else:
+                        d["checked"]=False
+                    action_status=True
+                    action_text=d["text"]
+        elif action=="delete":
+            print("TODO DELETE", uid)
+            for i in range(len(data)):
+                if data[i]["uid"]==uid:
+                    action_text=data[i]["text"]
+                    del data[i]
+                    action_status=True
+                    break
+        # save changes
+        status=model.set_data("TODO", json.dumps(data))
+    # send a message
+    if action_status:
+        context.bot.send_message(chat_id=cid, 
+                                 text="{0} has been {1}ed".format(action_text, action),
+                                 disable_web_page_preview=True)
+    else:
+        context.bot.send_message(chat_id=cid, 
+                                 text=settings.MESSAGES["unknow"].format("unknown item or format"),
+                                 disable_web_page_preview=True)
+        

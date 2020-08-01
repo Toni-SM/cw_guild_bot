@@ -1,9 +1,11 @@
 import time
 import json
 import html
+import hashlib
 import telegram
 import traceback
 
+import model
 import settings
 
 def _admin_error(context, msg, user="", error="", trace=True):
@@ -17,6 +19,34 @@ def _admin_error(context, msg, user="", error="", trace=True):
     except Exception as e:
         print("[EXCEPTION] admin _error", e)
 
+# TO DO list
+
+def todo_get_data():
+    data=None
+    for d in model.data():
+        if d.key=="TODO":
+            data=d
+            break
+    # create if not exist
+    if not data:
+        status=model.set_data("TODO", json.dumps([]))
+        if settings.VERBOSE:
+            print("Create TODO:", status)
+        for d in model.data():
+            if d.key=="TODO":
+                data=d
+                break
+    return data
+
+def todo_item_in_todo(todo_list, item):
+    for i in todo_list:
+        if item==i["text"]:
+            return True
+    return False
+
+def todo_add_item(todo_list, item):
+    _uid=hashlib.sha256(bytes(str(item), "utf-8")).hexdigest()[:5]
+    todo_list.append({"text": item, "checked": False, "uid": _uid})
 
 # ITEMS
 

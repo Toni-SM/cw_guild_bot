@@ -94,10 +94,12 @@ if __name__=="__main__":
     dispatcher.add_handler(ext.CommandHandler(["elite"], functions.commands.elite))
     dispatcher.add_handler(ext.CommandHandler(["craft"], functions.commands.craft))
     dispatcher.add_handler(ext.CommandHandler(["craft_reset"], functions.commands.craft_reset))
+    dispatcher.add_handler(ext.CommandHandler(["todo"], functions.commands.todo))
     
     # regexp handlers
     dispatcher.add_handler(ext.MessageHandler(ext.Filters.regex(r'/stomp_[\w]+'), functions.regex.stomp))
     dispatcher.add_handler(ext.MessageHandler(ext.Filters.regex(r'/[wrk][\d]+'), functions.regex.resource))
+    dispatcher.add_handler(ext.MessageHandler(ext.Filters.regex(r'/todo_[\w]+'), functions.regex.todo_edit))
     
     # filter handlers
     dispatcher.add_handler(ext.MessageHandler(ext.Filters.forwarded, functions.filters.forwarded))
