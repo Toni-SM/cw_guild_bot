@@ -234,7 +234,7 @@ def _action_roster(cid, user, content, update, context):
     if True in time_list:
         i=0
         tmp=""
-        header=u'\U0001F4E2 Attention to the battle order\n'
+        header=u'\U0001F4E2 The battle is coming\n'
         for player in content:
             if b' [\\u2694] ' not in player and b' [\\U0001f6e1] ' not in player:
                 cw_name=b' '.join(player.split(b' ')[3:]).decode()

@@ -104,6 +104,7 @@ def craft_resume(update, context):
     text=text_ready_list
     if not len(text):
         text=u"\U0001F622 Nothing ready to craft"
+    text+="\n\n<u>Underlines</u> are in guild warehouse"
     if owners:
         text+=u"\n\n<b>Owners:</b>"+owners
     else:
