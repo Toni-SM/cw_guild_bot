@@ -108,26 +108,30 @@ def _action_reinforcement(cid, user, content, update, context):
             print("            Guild Warehouse")
         # clean old recipes and parts
         if len(content.split(b'\\n'))>1:
-            if content.split(b'\\n')[1].startswith(b'r'):
+            if b'\\U0001f4c3' in content:
                 print("            clean recipes")
                 CACHE["guild"]["recipes"]={}
-            elif content.split(b'\\n')[1].startswith(b'k'):
+            elif b'\\U0001f9e9' in content:
                 print("            clean parts")
                 CACHE["guild"]["parts"]={}
         # cache data
         for c in content.split(b'\\n')[1:]:
             tmp_code=c.split(b' ')[0]
-            tmp=b' '.join(c.split(b' ')[1:]).split(b' x ')
-            # recipe
-            if tmp_code.startswith(b'r'):
-                CACHE["guild"]["recipes"][tmp[0].decode().lower()]=int(tmp[1])
-            # part
-            elif tmp_code.startswith(b'k'):
-                CACHE["guild"]["parts"][tmp[0].decode().lower()]=int(tmp[1])
+            # recipes and parts
+            if tmp_code.startswith(b'r') or tmp_code.startswith(b'k'):
+                # recipe
+                tmp=b' '.join(c.split(b' ')[1:]).split(b' x ')
+                if tmp_code.startswith(b'r'):
+                    CACHE["guild"]["recipes"][tmp[0][10:].decode().lower()]=int(tmp[1])
+                # part
+                elif tmp_code.startswith(b'k'):
+                    CACHE["guild"]["parts"][tmp[0][10:].decode().lower()]=int(tmp[1])
             # resource
-            else:
-                CACHE[user.id]["resources"]["guild"][tmp[0].decode()]=int(tmp[1])
-                CACHE["guild"]["resources"][tmp[0].decode()]=int(tmp[1])
+            elif c!=tmp_code:
+                tmp=b' '.join(c.split(b' ')[1:]).split(b' x ')
+                if len(tmp)==2:
+                    CACHE[user.id]["resources"]["guild"][tmp[0].decode()]=int(tmp[1])
+                    CACHE["guild"]["resources"][tmp[0].decode()]=int(tmp[1])
     # reinforcement message
     elif content.split(b'\\n')[0].startswith(b'Materials needed for '):
         # validate the cache
@@ -193,8 +197,8 @@ def _action_crafting_list(cid, user, content, update, context):
                 data["recipes"][c_name]=c_amount
                 data["datetime"]=today
         # part
-        else:
-            tmp=c.split(b' (')
+        elif c.startswith(b'\\U0001f9e9'):
+            tmp=c.split(b'\\U0001f9e9')[1].split(b' (')
             if len(tmp)==2 and tmp[1].endswith(b')'):
                 c_name=tmp[0].decode().lower()
                 c_amount=int(tmp[1][:-1])
@@ -214,7 +218,7 @@ def _action_roster(cid, user, content, update, context):
     Show sleepy members
     """
     content=content.split(b'\\n')[1:]
-    # chek UTC battle
+    # check UTC battle
     utcnow=datetime.datetime.utcnow()
     time_list=[]
     for t in settings.BATTLES:
@@ -262,7 +266,7 @@ def _action_deposit(cid, user, content, update, context):
     """
     Modify amount of items after deposit
     """
-    item=b' '.join(content.split(b' ')[2:-1]).decode()
+    item=b' '.join(content.split(b' ')[2:-1]).decode()[10:]
     amount=int(content.split(b' ')[-1][1:-1])
     print("            Deposit: {0} x ({1})".format(item, amount))
     item=utils.item_by_name(item)
@@ -297,6 +301,95 @@ def _action_deposit(cid, user, content, update, context):
                     else:
                         utils._admin_error(context, "_action_deposit", user=user, error="no registered user", trace=False)
 
+def _alliances_top(cid, user, content, update, context):
+    """
+    Alliances top parser
+    """
+    print("            Alliances top")
+    show=False
+    export=True
+    clean_data=False
+    # check UTC battle
+    utcnow=datetime.datetime.utcnow()
+    utcnow=update.message["forward_date"]
+    # request data
+    content=content.split(b'\\n')[1:]
+    alliances={"previous": "", "alliances": {}}
+    # clean data
+    if clean_data:
+        status=model.set_data("ALLIANCES", json.dumps(alliances))
+        print("            Clean alliances data")
+        return
+    for d in model.data():
+        if d.key=="ALLIANCES":
+            alliances=json.loads(d.value)
+            break    
+    # validate message
+    parse_status=True
+    if alliances["previous"]==b'\\n'.join(content).decode():
+        print("            Skip same message")
+        parse_status=False
+    # parse message
+    if parse_status:
+        alliances["previous"]=b'\\n'.join(content).decode()
+        for alliance in content:
+            alliance=alliance.split(b' ')
+            score=float(alliance[-1].decode())
+            name=b' '.join(alliance[1:-1]).decode()
+            
+            scores=alliances["alliances"].get(name, [])
+            scores.append([score, str(utcnow)])
+            alliances["alliances"][name]=scores
+    # save changes
+    status=model.set_data("ALLIANCES", json.dumps(alliances))
+    # plot data
+    try:
+        import matplotlib.pyplot as plt
+        import numpy as np
+    except:
+        return
+    caption="Last difference:"
+    plt.clf()
+    ax=plt.gca()
+    for k in alliances["alliances"]:
+        scores=np.array([item[0] for item in alliances["alliances"][k]])
+        dates=[datetime.datetime.fromisoformat(item[1]) for item in alliances["alliances"][k]]
+        if len(dates)>1:
+            caption+="\n  - {0} ({1})".format(k, round(np.diff(scores)[-1], 2))
+            plt.plot(dates[1:], np.diff(scores), marker=".", markersize=5, label=k)
+    plt.title("Alliances top (difference)")
+    ax.xaxis_date()
+    plt.grid(True)
+    plt.legend()
+    if export:
+        plt.savefig("alliances-diff.jpg")
+    if show:
+        plt.show()
+    plt.clf()
+    ax=plt.gca()
+    for k in alliances["alliances"]:
+        scores=np.array([item[0] for item in alliances["alliances"][k]])
+        dates=[datetime.datetime.fromisoformat(item[1]) for item in alliances["alliances"][k]]
+        plt.plot(dates, scores, marker=".", markersize=5, label=k)
+    plt.title("Alliances top (progress)")
+    ax.xaxis_date()
+    plt.grid(True)
+    plt.legend()
+    if export:
+        plt.savefig("alliances.jpg")
+    if show:
+        plt.show()
+    if export:
+        context.bot.send_photo(chat_id=cid,
+                               caption=caption,
+                               photo=open("alliances.jpg", 'rb'),
+                               parse_mode=telegram.ParseMode.HTML,
+                               disable_web_page_preview=True)
+        # context.bot.send_photo(chat_id=cid,
+                               # photo=open("alliances-diff.jpg", 'rb'),
+                               # caption=caption,
+                               # parse_mode=telegram.ParseMode.HTML,
+                               # disable_web_page_preview=True)
 
 # MAIN FUNCTION
 
@@ -362,7 +455,12 @@ def forwarded(update, context):
             return
             
         # parts and recipes
-        if (b'(' in content and b')' in content) and not (b'Equipment' in content or b'Storage' in content or b'/use_' in content or b'U0001f3f7' in content):
+        if (content.startswith(b'\\U0001f4c3') or content.startswith(b'\\U0001f9e9')) and not (b'Equipment' in content or b'Storage' in content or b'/use_' in content or b'U0001f3f7' in content):
             _action_crafting_list(cid, user, content, update, context)
+            return
+            
+        # alliances top
+        if content.split(b'\\n')[0]==b'\\U0001f91dAlliances top:':
+            _alliances_top(cid, user, content, update, context)
             return
             
