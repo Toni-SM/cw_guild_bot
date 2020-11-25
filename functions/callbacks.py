@@ -2,6 +2,7 @@ import html
 import json
 import datetime
 import telegram
+from copy import deepcopy
 
 import model
 import utils
@@ -38,6 +39,8 @@ def _craft(update):
             owners+="\n    - {0} ({1})".format(settings.GUILD_NAME.decode('unicode_escape'), "recipes")            
         if parts:
             owners+="\n    - {0} ({1})".format(settings.GUILD_NAME.decode('unicode_escape'), "parts")            
+    recipes_guild=deepcopy(recipes)
+    parts_guild=deepcopy(parts)
     # users
     for u in model.users():
         crafting=json.loads(u.crafting)
@@ -71,12 +74,23 @@ def _craft(update):
         if item_recipe and item_part:
             r_recipe=recipes.get(item_recipe["name"].lower(), 0)
             r_part=parts.get(item_part["name"].lower(), 0)
+            rg_recipe=recipes_guild.get(item_recipe["name"].lower(), 0)
+            rg_part=parts_guild.get(item_part["name"].lower(), 0)    
             is_crafteable=utils.item_is_crafteable(item_recipe, r_recipe, r_part)
+            is_gcrafteable=utils.item_is_crafteable(item_recipe, rg_recipe, rg_part)
             crafteable=u'\U00002705' if is_crafteable else u'\U0001F17E'
-            text_full_list+="\n/w{0}  {4}  {1} | {2}  {3}".format(code, r_recipe, r_part, item_recipe["name"][:-7], crafteable)
+            # text full_list
+            if is_gcrafteable:
+                text_full_list+="\n/w{0}  {4}  {1} | {2}  <b>{3}*</b>".format(code, r_recipe, r_part, item_recipe["name"][:-7], crafteable)
+            else:
+                text_full_list+="\n/w{0}  {4}  {1} | {2}  {3}".format(code, r_recipe, r_part, item_recipe["name"][:-7], crafteable)
+            # text ready_list
             if is_crafteable:
                 crafteable=utils.emoji_tier(item_recipe["tier"])
-                text_ready_list+="\n/w{0}  {4}  {1} | {2}  {3}".format(code, r_recipe, r_part, item_recipe["name"][:-7], crafteable)
+                if is_gcrafteable:
+                    text_ready_list+="\n/w{0}  {4}  {1} | {2}  <u>{3}</u>".format(code, r_recipe, r_part, item_recipe["name"][:-7], crafteable)
+                else:
+                    text_ready_list+="\n/w{0}  {4}  {1} | {2}  {3}".format(code, r_recipe, r_part, item_recipe["name"][:-7], crafteable)
     return text_full_list, text_ready_list, owners
 
 
