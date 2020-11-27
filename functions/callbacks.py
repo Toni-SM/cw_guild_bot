@@ -65,8 +65,8 @@ def _craft(update):
                 else:
                     parts[k]=crafting["parts"][k]
     # list items
-    print(recipes)
-    print(parts)
+    # print(recipes)
+    # print(parts)
     for i in range(1,125):
         code=str(i).zfill(2)
         item_recipe=utils.item_by_code("r{0}".format(code), "recipes")
@@ -81,14 +81,14 @@ def _craft(update):
             crafteable=u'\U00002705' if is_crafteable else u'\U0001F17E'
             # text full_list
             if is_gcrafteable:
-                text_full_list+="\n/w{0}  {4}  {1} | {2}  <b>{3}*</b>".format(code, r_recipe, r_part, item_recipe["name"][:-7], crafteable)
+                text_full_list+="\n/w{0}  {4}  {1} | {2}  <u>{3}</u>".format(code, r_recipe, r_part, item_recipe["name"][:-7], crafteable)
             else:
                 text_full_list+="\n/w{0}  {4}  {1} | {2}  {3}".format(code, r_recipe, r_part, item_recipe["name"][:-7], crafteable)
             # text ready_list
             if is_crafteable:
                 crafteable=utils.emoji_tier(item_recipe["tier"])
                 if is_gcrafteable:
-                    text_ready_list+="\n/w{0}  {4}  {1} | {2}  <u>{3}</u>".format(code, r_recipe, r_part, item_recipe["name"][:-7], crafteable)
+                    text_ready_list+="\n/w{0}  {4}  {1} | {2}  <u><b>{3}</b></u>".format(code, r_recipe, r_part, item_recipe["name"][:-7], crafteable)
                 else:
                     text_ready_list+="\n/w{0}  {4}  {1} | {2}  {3}".format(code, r_recipe, r_part, item_recipe["name"][:-7], crafteable)
     return text_full_list, text_ready_list, owners
