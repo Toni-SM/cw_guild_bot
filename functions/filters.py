@@ -189,7 +189,8 @@ def _action_crafting_list(cid, user, content, update, context):
             continue
         # recipe
         if c.startswith(b'\\U0001f4c3'):
-            tmp=c.split(b'\\U0001f4c3')[1].split(b' /view_r')[0]
+            # tmp=c.split(b'\\U0001f4c3')[1].split(b' /view_r')[0]
+            tmp=c.split(b'\\U0001f4c3')[1].split(b' /i_r')[0]
             tmp=tmp.split(b' (')
             if len(tmp)==2 and tmp[1].endswith(b')'):
                 c_name=tmp[0].decode().lower()
