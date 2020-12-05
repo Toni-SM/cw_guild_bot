@@ -97,7 +97,7 @@ def _action_reinforcement(cid, user, content, update, context):
     """
     delta=5*60
     # guild warehouse message
-    if content.split(b'\\n')[0]==b'Guild Warehouse:':
+    if content.split(b'\\n')[0].startswith(b'Guild Warehouse:'):
         # validate the cache
         if (datetime.datetime.today()-CACHE[user.id]["resources"]["datetime"]).total_seconds()>delta:
             CACHE[user.id]["resources"]["guild"]={}
@@ -441,7 +441,7 @@ def forwarded(update, context):
             return
         
         # guild warehouse
-        if content.split(b'\\n')[0]==b'Guild Warehouse:':
+        if content.split(b'\\n')[0].startswith(b'Guild Warehouse:'):
             _action_reinforcement(cid, user, content, update, context)
             return
             
