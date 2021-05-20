@@ -45,6 +45,11 @@ def pin(update, context):
     Pin a message
     """
     cid=update.message.chat.id
+    
+    # validate user
+    if not utils._check_user(context, update.effective_user.id, cid):
+        return 
+       
     try:
         reply=update.message.reply_to_message
         context.bot.pin_chat_message(chat_id=cid, 
@@ -71,6 +76,11 @@ def everybody(update, context):
     Mention all subscribed users
     """
     cid=update.message.chat.id
+    
+    # validate user
+    if not utils._check_user(context, update.effective_user.id, cid):
+        return 
+        
     # telegram user
     user=model.User(id=update.effective_user.id,
                     username=update.effective_user.username,
@@ -110,6 +120,11 @@ def elite(update, context):
     Mention the elite 
     """
     cid=update.message.chat.id
+    
+    # validate user
+    if not utils._check_user(context, update.effective_user.id, cid):
+        return 
+        
     # telegram user
     user=model.User(id=update.effective_user.id,
                     username=update.effective_user.username,
@@ -151,6 +166,12 @@ def elite(update, context):
 def craft(update, context):
     """
     """
+    cid=update.message.chat.id
+    
+    # validate user
+    if not utils._check_user(context, update.effective_user.id, cid):
+        return 
+        
     update.callback_query=telegram.CallbackQuery(id="new-message", 
                                                  from_user=update.effective_user, 
                                                  chat_instance="", 
@@ -163,6 +184,11 @@ def craft_reset(update, context):
     """
     global CACHE
     cid=update.message.chat.id
+    
+    # validate user
+    if not utils._check_user(context, update.effective_user.id, cid):
+        return 
+        
     tmp=update.message.text.split(" ")
     if len(tmp)>1:
         if tmp[1]=="yes":
@@ -199,6 +225,11 @@ def todo(update, context):
     TO DO list
     """
     cid=update.message.chat.id
+    
+    # validate user
+    if not utils._check_user(context, update.effective_user.id, cid):
+        return 
+        
     # get content
     data=json.loads(utils.todo_get_data().value)
     # add a replied message

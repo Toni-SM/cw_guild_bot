@@ -98,6 +98,17 @@ def empty(update, context):
     context.bot.answer_callback_query(update.callback_query.id)
  
 def craft_resume(update, context):
+
+    try:
+        cid=update.message.chat.id
+    except:
+        cid=update.callback_query.message.chat.id
+        
+    # validate user
+    if not utils._check_user(context, update.effective_user.id, cid):
+        context.bot.answer_callback_query(update.callback_query.id)
+        return
+
     query=update.callback_query
     text_full_list, text_ready_list, owners=_craft(update)
     # send message
@@ -130,6 +141,16 @@ def craft_resume(update, context):
         context.bot.answer_callback_query(update.callback_query.id)
 
 def craft_all(update, context):
+    try:
+        cid=update.message.chat.id
+    except:
+        cid=update.callback_query.message.chat.id
+        
+    # validate user
+    if not utils._check_user(context, update.effective_user.id, cid):
+        context.bot.answer_callback_query(update.callback_query.id)
+        return
+    
     query=update.callback_query
     text_full_list, text_ready_list, owners=_craft(update)
     # send message

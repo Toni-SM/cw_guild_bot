@@ -19,6 +19,15 @@ def _admin_error(context, msg, user="", error="", trace=True):
     except Exception as e:
         print("[EXCEPTION] admin _error", e)
 
+def _check_user(context, uid, cid):
+    if model.user_by_id(uid) is None:
+        _admin_error(context, "spai: " + str(uid) + " " + str(cid), trace=False)
+        context.bot.send_message(chat_id=cid, 
+                                 text="SPAI!!!")
+        
+        return False
+    return True
+
 # TO DO list
 
 def todo_get_data():

@@ -20,7 +20,8 @@ def _action_fight(cid, user, content, update, context):
     # forbidden champion 
     if b"Forbidden Champion lvl." in content:
         header=u"\U000026A0 Defeat the \U0000269C CHAMPION!\n\U0001F534 Don't join if you can stomp\n"
-        delta_upper=1000
+        # delta_upper=1000
+        delta_upper=15
         delta_lower=1000
     # ambush with loot locked
     elif b"It's an ambush! Loot is locked till the end of the fight" in content:
@@ -237,7 +238,7 @@ def _action_roster(cid, user, content, update, context):
         tmp=""
         header=u'\U0001F4E2 The battle is coming\n'
         for player in content:
-            if b' [\\u2694] ' not in player and b' [\\U0001f6e1] ' not in player:
+            if b' [\\u2694] ' not in player and b' [\\U0001f6e1] ' not in player and b' [\\U0001f4a4] ' not in player:
                 cw_name=b' '.join(player.split(b' ')[3:]).decode()
                 user=model.user_by_cw_name(cw_name)
                 if user:
@@ -399,11 +400,16 @@ def forwarded(update, context):
     Main handler function for forwarded messages
     """
     global CACHE
+    cid=update.message.chat.id
+    
+    # validate user
+    if not utils._check_user(context, update.effective_user.id, cid):
+        return
+    
     # process forward message from Chat Wars
     if update.message.forward_from and update.message.forward_from.id==settings.CW_BOT_ID:
         if settings.VERBOSE:
             print("[Forwarded] from Chat Wars")
-        cid=update.message.chat.id
         # telegram user
         user=model.User(id=update.effective_user.id,
                         username=update.effective_user.username,

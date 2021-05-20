@@ -17,6 +17,11 @@ def stomp(update, context):
     if settings.VERBOSE:
         print("[REGEX] help for stomp hostile creatures")
     cid=update.message.chat.id
+    
+    # validate user
+    if not utils._check_user(context, update.effective_user.id, cid):
+        return
+        
     # telegram user
     user=model.User(id=update.effective_user.id,
                     username=update.effective_user.username,
@@ -74,6 +79,11 @@ def resource(update, context):
     if settings.VERBOSE:
         print("[REGEX] resource")
     cid=update.message.chat.id
+    
+    # validate user
+    if not utils._check_user(context, update.effective_user.id, cid):
+        return
+        
     # list of resources
     recipes=""
     parts=""
@@ -135,6 +145,11 @@ def todo_edit(update, context):
     action_text=False
     action=""
     cid=update.message.chat.id
+    
+    # validate user
+    if not utils._check_user(context, update.effective_user.id, cid):
+        return
+    
     text=update.message.text.split("_")
     if len(text)==3:
         action=text[1]
